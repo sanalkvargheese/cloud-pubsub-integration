@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: publisher
+  template:
+    metadata:
+      labels:
+        app: publisher
+    spec:
+      containers:
+      - name: publisher
+        image:  gcr.io/alpha-1996/producer:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: GCP_PROJECT_ID
+          value: "alpha-1996"
+        - name: DB_HOST
+          value: "34.68.130.150"
+        - name: DB_NAME
+          value: "db"
+        - name: DB_USER
+          value: "postgres"
+        - name: DB_PASS
+          value: "admin"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: publisher
+spec:
+  type: LoadBalancer
+  selector:
+    app: publisher
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000

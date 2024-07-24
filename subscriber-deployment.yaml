@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscriber
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: subscriber
+  template:
+  
+    metadata:
+      labels:
+        app: subscriber
+    spec:
+      containers:
+      - name: subscriber
+        image: gcr.io/alpha-1996/subscriber:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: DB_HOST
+          value: "34.68.130.150"
+        - name: DB_NAME
+          value: "db"
+        - name: DB_USER
+          value: "postgres"
+        - name: DB_PASS
+          value: "admin"
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: subscriber
+spec:
+  selector:
+    app: subscriber
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
